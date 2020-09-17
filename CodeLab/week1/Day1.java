@@ -10,14 +10,14 @@ public class Day1 {
         if (num1.length() == 0 && num2.length() == 0) {
             return "";
         }
-        String result = "";
+        StringBuilder result = new StringBuilder();
         int add = 0;
         int l1 = num1.length() - 1;
         int l2 = num2.length() - 1;
         while (l1 >= 0 || l2 >= 0) {
             int val1 = l1 >= 0 ? num1.charAt(l1) - '0' : 0;
             int val2 = l2 >= 0 ? num2.charAt(l2) - '0' : 0;
-            result = ((val1 + val2 + add) % 10) + result;
+            result.insert(0, ((val1 + val2 + add) % 10));
             if (val1 + val2 + add >= 10) {
                 add = 1;
             } else {
@@ -27,9 +27,9 @@ public class Day1 {
             l2--;
         }
         if (add == 1) {
-            result = 1 + result;
+            result.insert(0, 1);
         }
-        return result;
+        return result.toString();
     }
 
 
