@@ -74,41 +74,32 @@ public class Problems {
 
     public static ListNode[] splitListToParts(ListNode root, int k) {
         ListNode[] result = new ListNode[k];
-        ListNode temp = root;
+        ListNode temp1 = root;
         int size = 0;
-        while (temp != null) {
-            temp = temp.next;
+        while (temp1 != null) {
+            temp1 = temp1.next;
             size++;
         }
+        ListNode temp = root;
         int rem = size % k;
         int lengthOfPart = size / k;
-        ListNode temp1 = new ListNode(0, root);
-        ListNode temp2 = root;
-        int z = 0;
         for (int i = 0; i < k; i++) {
-
-            if (rem > 0) {
-                z = 1;
+            root = temp;
+            for (int j = 0; j < lengthOfPart + (rem > 0 ? 1 : 0) - 1; j++) {
+                temp = temp.next;
             }
-            for (int b = 0; b < lengthOfPart + z; b++) {
-                temp1 = temp1.next;
-
+            if (temp != null) {
+                ListNode temp2 = temp.next;
+                temp.next = null;
+                temp = temp2;
             }
-            if (temp1 != null) {
-                temp2 = temp1.next;
-                temp1.next = null;
-                result[i] = root;
-                root = temp2;
-                temp1.next = root;
-            } else {
-                result[i] = root;
-            }
-
+            result[i] = root;
             rem--;
         }
         return result;
     }
 
+    
     public static void main(String[] args) {
         ListNode a = new ListNode(1);
         ListNode b = new ListNode(2);
