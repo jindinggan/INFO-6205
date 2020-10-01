@@ -220,6 +220,63 @@ public class Problems {
         return stack.isEmpty();
     }
 
+    public String simplifyPath(String path) {
+        if (path.length() == 0) {
+            return path;
+        }
+        String[] parts = path.split("/");
+        Stack<String> stack = new Stack<String>();
+        for (String s : parts) {
+            if (s.length() == 0 || s.equals(".")) {
+                continue;
+            } else if (s.equals("..")) {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+            } else {
+                stack.push(s);
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String str : stack) {
+            builder.append("/");
+            builder.append(str);
+        }
+        return builder.length() > 0 ? builder.toString() : "/";
+    }
+
+    class MinStack {
+
+        private Stack<Integer> stack = new Stack<Integer>();
+        private Stack<Integer> min = new Stack<Integer>();
+
+        public MinStack() {
+
+        }
+
+        public void push(int x) {
+            stack.push(x);
+            if (min.isEmpty() || x <= min.peek()) {
+                min.push(x);
+            }
+        }
+
+        public void pop() {
+            if (stack.peek().equals(min.peek())) {
+                min.pop();
+            }
+            this.stack.pop();
+        }
+
+        public int top() {
+            return this.stack.peek();
+        }
+
+        public int getMin() {
+            return min.peek();
+        }
+    }
+
 
     public static void main(String[] args) {
         ListNode a = new ListNode(1);
