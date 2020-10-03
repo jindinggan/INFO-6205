@@ -277,6 +277,170 @@ public class Problems {
         }
     }
 
+    public int calculate(String s) {
+
+        Stack<Integer> stack = new Stack<Integer>();
+        int operand = 0;
+        int result = 0;
+        int sign = 1;
+
+        for (int i = 0; i < s.length(); i++) {
+
+            char ch = s.charAt(i);
+            if (Character.isDigit(ch)) {
+                operand = 10 * operand + (int) (ch - '0');
+
+            } else if (ch == '+') {
+                result += sign * operand;
+
+                sign = 1;
+
+                operand = 0;
+
+            } else if (ch == '-') {
+
+                result += sign * operand;
+                sign = -1;
+                operand = 0;
+
+            } else if (ch == '(') {
+                stack.push(result);
+                stack.push(sign);
+
+                sign = 1;
+                result = 0;
+
+            } else if (ch == ')') {
+
+                result += sign * operand;
+
+                result *= stack.pop();
+
+                result += stack.pop();
+
+
+                operand = 0;
+            }
+        }
+        return result + (sign * operand);
+    }
+
+    public String removeDuplicateLetters(String s) {
+        int[] cnt = new int[26];
+        int pos = 0;
+        for (int i = 0; i < s.length(); i++) cnt[s.charAt(i) - 'a']++;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) < s.charAt(pos)) pos = i;
+            if (--cnt[s.charAt(i) - 'a'] == 0) break;
+        }
+
+        return s.length() == 0 ? "" : s.charAt(pos) + removeDuplicateLetters(s.substring(pos + 1).replaceAll("" + s.charAt(pos), ""));
+    }
+
+    public String decodeString(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ']') {
+                List<Character> decodedString = new ArrayList<>();
+
+                while (stack.peek() != '[') {
+                    decodedString.add(stack.pop());
+                }
+
+                stack.pop();
+                int base = 1;
+                int k = 0;
+
+                while (!stack.isEmpty() && Character.isDigit(stack.peek())) {
+                    k = k + (stack.pop() - '0') * base;
+                    base *= 10;
+                }
+
+                while (k != 0) {
+                    for (int j = decodedString.size() - 1; j >= 0; j--) {
+                        stack.push(decodedString.get(j));
+                    }
+                    k--;
+                }
+            }
+
+            else {
+                stack.push(s.charAt(i));
+            }
+        }
+
+        char[] result = new char[stack.size()];
+        for (int i = result.length - 1; i >= 0; i--) {
+            result[i] = stack.pop();
+        }
+        return new String(result);
+    }
+
+    public String removeKdigits(String num, int k) {
+        LinkedList<Character> stack = new LinkedList<Character>();
+
+        for(char digit : num.toCharArray()) {
+            while(stack.size() > 0 && k > 0 && stack.peekLast() > digit) {
+                stack.removeLast();
+                k -= 1;
+            }
+            stack.addLast(digit);
+        }
+
+        /* remove the remaining digits from the tail. */
+        for(int i=0; i<k; ++i) {
+            stack.removeLast();
+        }
+
+        // build the final string, while removing the leading zeros.
+        StringBuilder ret = new StringBuilder();
+        boolean leadingZero = true;
+        for(char digit: stack) {
+            if(leadingZero && digit == '0') continue;
+            leadingZero = false;
+            ret.append(digit);
+        }
+
+        /* return the final string  */
+        if (ret.length() == 0) return "0";
+        return ret.toString();
+    }
+
+    public boolean find132pattern(int[] nums) {
+        List <int[]> intervals = new ArrayList < > ();
+        int i = 1, s = 0;
+        while (i < nums.length) {
+            if (nums[i] < nums[i - 1]) {
+                if (s < i - 1)
+                    intervals.add(new int[] {nums[s], nums[i - 1]});
+                s = i;
+            }
+            for (int[] a: intervals)
+                if (nums[i] > a[0] && nums[i] < a[1])
+                    return true;
+            i++;
+        }
+        return false;
+    }
+
+    public int[] nextGreaterElement(int[] findNums, int[] nums) {
+        Stack <Integer> stack = new Stack<>();
+        HashMap < Integer, Integer > map = new HashMap < > ();
+        int[] res = new int[findNums.length];
+        for (int i = 0; i < nums.length; i++) {
+            while (!stack.empty() && nums[i] > stack.peek())
+                map.put(stack.pop(), nums[i]);
+            stack.push(nums[i]);
+        }
+        while (!stack.empty())
+            map.put(stack.pop(), -1);
+        for (int i = 0; i < findNums.length; i++) {
+            res[i] = map.get(findNums[i]);
+        }
+        return res;
+    }
+
+
 
     public static void main(String[] args) {
         ListNode a = new ListNode(1);
