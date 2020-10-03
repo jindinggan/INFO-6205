@@ -440,8 +440,86 @@ public class Problems {
         return res;
     }
 
+    public int[] nextGreaterElements(int[] nums) {
+        int[] res = new int[nums.length];
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 2 * nums.length - 1; i >= 0; --i) {
+            while (!stack.empty() && nums[stack.peek()] <= nums[i % nums.length]) {
+                stack.pop();
+            }
+            res[i % nums.length] = stack.empty() ? -1 : nums[stack.peek()];
+            stack.push(i % nums.length);
+        }
+        return res;
+    }
 
+    int i;
+    public String countOfAtoms(String formula) {
+        StringBuilder ans = new StringBuilder();
+        i = 0;
+        Map<String, Integer> count = parse(formula);
+        for (String name: count.keySet()) {
+            ans.append(name);
+            int multiplicity = count.get(name);
+            if (multiplicity > 1) ans.append("" + multiplicity);
+        }
+        return new String(ans);
+    }
 
+    public Map<String, Integer> parse(String formula) {
+        int N = formula.length();
+        Map<String, Integer> count = new TreeMap();
+        while (i < N && formula.charAt(i) != ')') {
+            if (formula.charAt(i) == '(') {
+                i++;
+                for (Map.Entry<String, Integer> entry: parse(formula).entrySet()) {
+                    count.put(entry.getKey(), count.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                }
+            } else {
+                int iStart = i++;
+                while (i < N && Character.isLowerCase(formula.charAt(i))) i++;
+                String name = formula.substring(iStart, i);
+                iStart = i;
+                while (i < N && Character.isDigit(formula.charAt(i))) i++;
+                int multiplicity = iStart < i ? Integer.parseInt(formula.substring(iStart, i)) : 1;
+                count.put(name, count.getOrDefault(name, 0) + multiplicity);
+            }
+        }
+        int iStart = ++i;
+        while (i < N && Character.isDigit(formula.charAt(i))) i++;
+        if (iStart < i) {
+            int multiplicity = Integer.parseInt(formula.substring(iStart, i));
+            for (String key: count.keySet()) {
+                count.put(key, count.get(key) * multiplicity);
+            }
+        }
+        return count;
+    }
+
+    public int[] asteroidCollision(int[] asteroids) {
+        Stack<Integer> stack = new Stack();
+        for (int ast: asteroids) {
+            collision: {
+                while (!stack.isEmpty() && ast < 0 && 0 < stack.peek()) {
+                    if (stack.peek() < -ast) {
+                        stack.pop();
+                        continue;
+                    } else if (stack.peek() == -ast) {
+                        stack.pop();
+                    }
+                    break collision;
+                }
+                stack.push(ast);
+            }
+        }
+
+        int[] ans = new int[stack.size()];
+        for (int t = ans.length - 1; t >= 0; --t) {
+            ans[t] = stack.pop();
+        }
+        return ans;
+    }
+    
     public static void main(String[] args) {
         ListNode a = new ListNode(1);
         ListNode b = new ListNode(2);
